@@ -3,6 +3,16 @@
 ## Overview
 
 ## Details: Cell Scoring
+The Halite game is complex enough that a competitor can improve their standing by enhancing any of several key components in their bot. 
+Given that the game revolves around collecting the largest quantity of halite in a specified amount of time, it seemed that optimally prioritizing
+cells to mine from, and allocating ships to those cells, would be the single most important aspects of a strong bot. For this reason, I spent more 
+time developing the target selection strategy than any other component of my bot.
+
+I believed, as many competitors did, that the fundamental quantity to maximize was the halite collected per time. Within the sphere of target selection,
+this takes the form of a scoring/objective function <img src="/tex/2a2ac6cebda315d6c50722c2181d9e3d.svg?invert_in_darkmode&sanitize=true" align=middle width=30.926619899999988pt height=24.65753399999998pt/>, where <img src="/tex/3e18a4a28fdee1744e5e3f79d13b9ff6.svg?invert_in_darkmode&sanitize=true" align=middle width=7.11380504999999pt height=14.15524440000002pt/> is the cell to scored. In its most basic construction, one has
+<p align="center"><img src="/tex/4380b1a37d943e0a85bd10f98e4ac9ec.svg?invert_in_darkmode&sanitize=true" align=middle width=81.71659155pt height=36.09514755pt/></p>
+where <img src="/tex/f8eae07bbbb80f68e9f0ee10c343cb7d.svg?invert_in_darkmode&sanitize=true" align=middle width=19.53905414999999pt height=22.465723500000017pt/> is the halite content of the cell and <img src="/tex/d4e86f88591cd633586e44f41f2a9be8.svg?invert_in_darkmode&sanitize=true" align=middle width=12.77917574999999pt height=20.221802699999984pt/> is the time it would take for a ship to move from this cell to the nearest dropoff point (including the shipyard).
+
 <p align="center"><img src="/tex/a91743d545c46fcecc0eade8ef2467c5.svg?invert_in_darkmode&sanitize=true" align=middle width=331.35747645pt height=78.7738347pt/></p>
 
 ## Next Steps
