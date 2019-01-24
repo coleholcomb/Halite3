@@ -3,7 +3,12 @@
 ## Overview
 
 ## Details: Cell Scoring
-$ x = y $
+$$
+\begin{align}
+S (c) &=  \max\limits_{t_m} S(c, t_{\rm m}) \\
+ S(c, t_{\rm m}) &= \frac{H_{\rm c}(t_{\rm c}, t_{\rm m}) - T_{\rm c}}{t_{\rm m} + t_c}\bigg[ \frac{1 + \frac{\sum_{\rm c' \ne c}  H_{\rm c'} - T_{\rm c'}}{}}{}\bigg] 
+\end{align}
+$$
 
 ## Next Steps
 * Better depositing conversion
