@@ -1,16 +1,14 @@
-# Write Up
+# Post-Mortem: A top 100 bot in 10 days
 
 ## Overview
 
-### Thoughts On The Game
-
-### My Performance
+This is my submission to the [Halite 3](halite.io) competition, hosted by [Two Sigma](https://www.twosigma.com/). My profile is [here](https://halite.io/user/?user_id=562).
 
 ## Details
 The Halite game is complex enough that a competitor can improve their standing by enhancing any of several key components in their bot. 
 Given that the game revolves around collecting the largest quantity of halite in a specified amount of time, it seemed that optimally prioritizing
 cells to mine from, and allocating ships to those cells, would be the single most important aspects of a strong bot. For this reason, I spent more 
-time developing the target selection strategy than any other component of my bot.
+time developing the target selection (cell scoring) strategy than any other component of my bot.
 
 ### Cell Scoring
 I believed, as many competitors did, that the fundamental quantity to maximize was the halite collected per time. Within the sphere of target selection,
@@ -31,7 +29,7 @@ cells to scoring combinations of cells along different travel paths. A more gene
 where <img src="/tex/520b5fc6ec14c91455e2fcf2ace53419.svg?invert_in_darkmode&sanitize=true" align=middle width=47.09474549999999pt height=24.65753399999998pt/> is the score a ship <img src="/tex/6f9bad7347b91ceebebd3ad7e6f6f2d1.svg?invert_in_darkmode&sanitize=true" align=middle width=7.7054801999999905pt height=14.15524440000002pt/> would achieve if it traveled and mined along path <img src="/tex/2ec6e630f199f589a2402fdf3e0289d5.svg?invert_in_darkmode&sanitize=true" align=middle width=8.270567249999992pt height=14.15524440000002pt/>. <img src="/tex/6fa93f442c42ae006141f1cc5567e25a.svg?invert_in_darkmode&sanitize=true" align=middle width=51.06733169999999pt height=24.65753399999998pt/>, <img src="/tex/560617f2ebc595b0ba857a0f4946cc03.svg?invert_in_darkmode&sanitize=true" align=middle width=47.95667414999999pt height=24.65753399999998pt/>, and <img src="/tex/78a9fbddc3e62359af9441f1cb56c722.svg?invert_in_darkmode&sanitize=true" align=middle width=42.00346094999999pt height=24.65753399999998pt/> are the halite mined, travel costs
 induced, and time in moving the ship <img src="/tex/6f9bad7347b91ceebebd3ad7e6f6f2d1.svg?invert_in_darkmode&sanitize=true" align=middle width=7.7054801999999905pt height=14.15524440000002pt/> along path <img src="/tex/2ec6e630f199f589a2402fdf3e0289d5.svg?invert_in_darkmode&sanitize=true" align=middle width=8.270567249999992pt height=14.15524440000002pt/>. One would then like to optimize over all paths <img src="/tex/2ec6e630f199f589a2402fdf3e0289d5.svg?invert_in_darkmode&sanitize=true" align=middle width=8.270567249999992pt height=14.15524440000002pt/> for a given ship <img src="/tex/6f9bad7347b91ceebebd3ad7e6f6f2d1.svg?invert_in_darkmode&sanitize=true" align=middle width=7.7054801999999905pt height=14.15524440000002pt/>. This, as far as I know, is not a 
 possible computation given the constraints of the game (e.g., the time limit of 2 seconds per turn), and so simplifications and approximations are necessary in order
-to prune the space of possible solutions to a managable level. I believe that some of the top competitors took this approach, which is why relatively fast languages
+to prune the space of possible solutions to a managable level. I believe that a few of the top competitors took this approach, which is why relatively fast languages
 like C++ and Java dominate the upper end of the leaderboard. I was not able to optimize my Python code to the point where moving beyond single cell calculations was 
 a feasible strategy, so I reduced the model to single cell calculations and approximated the effects of additional cells,
 <p align="center"><img src="/tex/5ea6dcd3cf295263b411d578222ac89c.svg?invert_in_darkmode&sanitize=true" align=middle width=382.14109394999997pt height=63.59824185pt/></p>
@@ -48,18 +46,31 @@ The first assumption is that a ship will seek to maximize its halite cargo befor
 where <img src="/tex/35cc71776e172499f645e66424105c57.svg?invert_in_darkmode&sanitize=true" align=middle width=93.53890259999999pt height=22.465723500000017pt/> is the maximum amount of halite an individual ship can carry at a time. This assumption reduces the numerator of <img src="/tex/2a2ac6cebda315d6c50722c2181d9e3d.svg?invert_in_darkmode&sanitize=true" align=middle width=30.926619899999988pt height=24.65753399999998pt/> to <img src="/tex/58ccbe88cdade1273da106638cdf7ffd.svg?invert_in_darkmode&sanitize=true" align=middle width=106.48602029999998pt height=24.65753399999998pt/>.
 In order to reduce the denominator, we assume that the travel and mining times for the additional cells will be about the same as those of the primary cell, such that
 a full path will include <img src="/tex/2ddd0c01fe3ca1a282413e9ceb252037.svg?invert_in_darkmode&sanitize=true" align=middle width=195.60703469999999pt height=27.94539330000001pt/> mining sites,
-<p align="center"><img src="/tex/0ad761f4b5f59cce1ec3fb3e232a4b16.svg?invert_in_darkmode&sanitize=true" align=middle width=290.11760415pt height=36.8951715pt/></p>
+<p align="center"><img src="/tex/599c7be962b3a325cbd0e2fb94bed095.svg?invert_in_darkmode&sanitize=true" align=middle width=292.4007471pt height=36.8951715pt/></p>
 
-Combining these approximations, the full score is
-<p align="center"><img src="/tex/6699d0cbc6d591d6317efac378048b06.svg?invert_in_darkmode&sanitize=true" align=middle width=471.2058087pt height=38.83491479999999pt/></p>
-<p align="center"><img src="/tex/f8bfc3a483b0e785ac7c71bc777479cb.svg?invert_in_darkmode&sanitize=true" align=middle width=0.0pt height=0.0pt/></p>
-<p align="center"><img src="/tex/c15cd462fa67be55b5d1f0fdffda9c5f.svg?invert_in_darkmode&sanitize=true" align=middle width=515.8157433pt height=78.7738347pt/></p>
-$$
 
-## Next Steps
+Combining the above approximations, the score is
+<p align="center"><img src="/tex/884aaeb1bc556514a23da1bcc32b11b2.svg?invert_in_darkmode&sanitize=true" align=middle width=273.06805184999996pt height=41.36729354999999pt/></p>
+
+Up to this point we have ignored an important nuance: what is <img src="/tex/46274a64e8b70f2d22618780e7ee8da1.svg?invert_in_darkmode&sanitize=true" align=middle width=34.899206099999994pt height=24.65753399999998pt/>? In fact, this is a time dependent quantity that increases nonlinearly with <img src="/tex/9f40ef19232722eb77473049a513a4ff.svg?invert_in_darkmode&sanitize=true" align=middle width=17.60094764999999pt height=20.221802699999984pt/>,
+<p align="center"><img src="/tex/cb23a9bddbce1435207c04d23be8d668.svg?invert_in_darkmode&sanitize=true" align=middle width=267.65978085pt height=25.6052115pt/></p>
+
+To find the best score, we maximize each cell over <img src="/tex/9f40ef19232722eb77473049a513a4ff.svg?invert_in_darkmode&sanitize=true" align=middle width=17.60094764999999pt height=20.221802699999984pt/>
+<p align="center"><img src="/tex/0db0a7210c0531de67603c5ed9587062.svg?invert_in_darkmode&sanitize=true" align=middle width=146.53346894999999pt height=23.8356162pt/></p>
+
+It can be shown that there is a value of %t_m<img src="/tex/8c9be81c4f12d166e8e74cb223acb155.svg?invert_in_darkmode&sanitize=true" align=middle width=652.5718188000001pt height=22.831056599999986pt/>N_t \times H \times W<img src="/tex/1cea794e569a80d1ed9acb5f1c58a9e4.svg?invert_in_darkmode&sanitize=true" align=middle width=104.15859629999999pt height=22.831056599999986pt/>N_t = 60<img src="/tex/57affd25b7ff44e536aedc718c54afe7.svg?invert_in_darkmode&sanitize=true" align=middle width=170.21221634999998pt height=22.831056599999986pt/>t_m + t(s,c)<img src="/tex/691cc427d87f9fedde694fb7b066dab8.svg?invert_in_darkmode&sanitize=true" align=middle width=213.07338194999997pt height=22.831056599999986pt/>H<img src="/tex/fd92a53167b3c6ae9574071613d555dc.svg?invert_in_darkmode&sanitize=true" align=middle width=27.11199479999999pt height=22.831056599999986pt/>W$ are the height and width of the map.
+
+The score derived above is not the end of the story. Heuristics were included to capitilize on the inspiration mechanic (4p only) and to
+increase priority to dense halite regions (decreasing travel time on secondary+ cells). Unfortunately these multipliers are not well motivated like the above
+discussion, and I was only able to tinker with them in the final day. As a result, their values are likely far from optimal and there is not much room for 
+explanation. Additionally, it should be noted that ``halite collected per turn" is not precisely the correct quantity to maximize, since there is also an
+advantage in returning the halite to the dropoffs sooner rather than later. This could likely be captured with some scoring heuristic, but I did not get around
+to implementing one.
+
+### Other
 * Better depositing conversion
 * Other ship types
-* Implement dropoffs
+
 
 ## Version History
 * botv14 (final)
@@ -102,6 +113,6 @@ $$
   * Reversed order of mining and depositing commands for more efficient deposition
   * Role swapping (depositing -> mining) is performed prior to command loop
 * botv1
-  * Basic role assignment
+  * Basic ship role assignment
   * Primitive mining selection
   * Naive deposit
