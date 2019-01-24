@@ -3,6 +3,20 @@
 ## Overview
 
 ## Details: Cell Scoring
+The Halite game is complex enough that a competitor can improve their standing by enhancing any of several key components in their bot. 
+Given that the game revolves around collecting the largest quantity of halite in a specified amount of time, it seemed that optimally prioritizing
+cells to mine from, and allocating ships to those cells, would be the single most important aspects of a strong bot. For this reason, I spent more 
+time developing the target selection strategy than any other component of my bot.
+
+I believed, as many competitors did, that the fundamental quantity to maximize was the halite collected per time. Within the sphere of target selection,
+this takes the form of a scoring/objective function $S(c)$, where $c$ is the cell to scored. In its most basic construction, one has
+$$
+\begin{align}
+S(c) &= \frac{H_{c}}{t_d}, 
+\end{align}
+$$
+where $H_c$ is the halite content of the cell and $t_d$ is the time it would take for a ship to move from this cell to the nearest dropoff point (including the shipyard).
+
 $$
 \begin{align}
 S (c) &=  \max\limits_{t_m} S(c, t_{\rm m}) \\
