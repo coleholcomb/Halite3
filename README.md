@@ -60,11 +60,12 @@ a full path will include <img src="/tex/2ddd0c01fe3ca1a282413e9ceb252037.svg?inv
 Combining the above approximations, the score is
 <p align="center"><img src="/tex/884aaeb1bc556514a23da1bcc32b11b2.svg?invert_in_darkmode&sanitize=true" align=middle width=273.06805184999996pt height=41.36729354999999pt/></p>
 
-Up to this point we have ignored an important nuance: what is <img src="/tex/46274a64e8b70f2d22618780e7ee8da1.svg?invert_in_darkmode&sanitize=true" align=middle width=34.899206099999994pt height=24.65753399999998pt/>? In fact, this is a time dependent quantity that increases nonlinearly with <img src="/tex/9f40ef19232722eb77473049a513a4ff.svg?invert_in_darkmode&sanitize=true" align=middle width=17.60094764999999pt height=20.221802699999984pt/>,
-<p align="center"><img src="/tex/cb23a9bddbce1435207c04d23be8d668.svg?invert_in_darkmode&sanitize=true" align=middle width=267.65978085pt height=25.6052115pt/></p>
+Up to this point we have ignored an important nuance: what is <img src="/tex/46274a64e8b70f2d22618780e7ee8da1.svg?invert_in_darkmode&sanitize=true" align=middle width=34.899206099999994pt height=24.65753399999998pt/>? In fact, this is a time dependent quantity that increases nonlinearly with time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/>
+that must adjusted for the travel time to the cell,
+<p align="center"><img src="/tex/dfe4e623d7de5fc35d6a9d4d27884a3a.svg?invert_in_darkmode&sanitize=true" align=middle width=244.25772195000002pt height=25.6052115pt/></p>
 
-To find the best score, we maximize each cell over <img src="/tex/9f40ef19232722eb77473049a513a4ff.svg?invert_in_darkmode&sanitize=true" align=middle width=17.60094764999999pt height=20.221802699999984pt/>
-<p align="center"><img src="/tex/0db0a7210c0531de67603c5ed9587062.svg?invert_in_darkmode&sanitize=true" align=middle width=146.53346894999999pt height=23.8356162pt/></p>
+where <img src="/tex/5ba61d66a221e9efc189f13e71390fa0.svg?invert_in_darkmode&sanitize=true" align=middle width=107.2144788pt height=24.65753399999998pt/>. To find the best score, we maximize each cell over <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/>
+<p align="center"><img src="/tex/a173fea0548123399481a93112595b54.svg?invert_in_darkmode&sanitize=true" align=middle width=195.85030575pt height=22.1917806pt/></p>
 
 It can be shown that there is a value of <img src="/tex/9f40ef19232722eb77473049a513a4ff.svg?invert_in_darkmode&sanitize=true" align=middle width=17.60094764999999pt height=20.221802699999984pt/> that maximizes the halite collected per time. In practice, I looked for the maximum score over an 
 <img src="/tex/6025137a73280691e8900733628d7dd5.svg?invert_in_darkmode&sanitize=true" align=middle width=91.98606779999999pt height=22.465723500000017pt/> matrix, where <img src="/tex/21eab637b280a159e0a38102d607ce90.svg?invert_in_darkmode&sanitize=true" align=middle width=57.351505199999984pt height=22.465723500000017pt/> is the maximum value of <img src="/tex/e663bf758c6d50df7bd0244f4c79a43d.svg?invert_in_darkmode&sanitize=true" align=middle width=79.36075124999999pt height=24.65753399999998pt/> that I computed scores for,
