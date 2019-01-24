@@ -3,14 +3,22 @@
 ## Overview
 
 This is my submission to the [Halite 3](halite.io) competition, hosted by [Two Sigma](https://www.twosigma.com/). My profile is [here](https://halite.io/user/?user_id=562).
+Unfortunately, I was not able to participate in the ~3 month competition until 10 days before the final submission deadline. Given the time I had available, I focused my time on
+the one or two aspects that I believed were the most important of creating a strong bot. As of this writing, my submission is sitting around rank ~90, with some uncertainty as 
+the final round plays out.
 
-## Details
+Most of my time was spent on optimizing target selection (detailed below) and on ship navigation. These features allow my bot to have a relatively strong early-game which
+typically gives me a slight edge in the first 100 turns. At the highest ranks, mid- and late-game seems to be dominated by exploitation of the inspiration and dropoff mechanics,
+which I was only able to naively implement in the final day of the competition, and ship micro-management around enemy ships, which I did not implement at all. I only had time to make
+use of inspiration in my 4-player game strategy, and hence my 4-player win rate is carrying my ranking while my 2-player win rate is abysmal. However, my presence in the top 100
+indicates that it is possible to get very far while concentrating only on one or two aspects of the game and maintaining only rudimentary implementations of the others. 
+
+## Details: Cell Scoring
 The Halite game is complex enough that a competitor can improve their standing by enhancing any of several key components in their bot. 
 Given that the game revolves around collecting the largest quantity of halite in a specified amount of time, it seemed that optimally prioritizing
 cells to mine from, and allocating ships to those cells, would be the single most important aspects of a strong bot. For this reason, I spent more 
-time developing the target selection (cell scoring) strategy than any other component of my bot.
+time developing the target selection (cell scoring) strategy than any other component of my bot, and provide details below.
 
-### Cell Scoring
 I believed, as many competitors did, that the fundamental quantity to maximize was the halite collected per time. Within the sphere of target selection,
 this takes the form of a scoring/objective function $S(c)$, where $c$ is the cell to scored. In its most basic construction, one has
 $$
@@ -88,7 +96,7 @@ S (c) &=  \max\limits_{t_m} S(c, t_{\rm m}).
 \end{align}
 $$
 
-It can be shown that there is a value of %t_m$ that maximizes the halite collected per time. In practice, I looked for the maximum score over an 
+It can be shown that there is a value of $t_m$ that maximizes the halite collected per time. In practice, I looked for the maximum score over an 
 $N_t \times H \times W$ matrix, where $N_t = 60$ is the maximum value of $t_m + t(s,c)$ that I computed scores for,
 and $H$ and $W$ are the height and width of the map.
 
@@ -98,11 +106,6 @@ discussion, and I was only able to tinker with them in the final day. As a resul
 explanation. Additionally, it should be noted that ``halite collected per turn" is not precisely the correct quantity to maximize, since there is also an
 advantage in returning the halite to the dropoffs sooner rather than later. This could likely be captured with some scoring heuristic, but I did not get around
 to implementing one.
-
-### Other
-* Better depositing conversion
-* Other ship types
-
 
 ## Version History
 * botv14 (final)
