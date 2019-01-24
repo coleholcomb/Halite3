@@ -84,15 +84,16 @@ S(c, t_m) &\approx \frac{H_{\rm max} - T(c,d)}{n\big(t(s,c) + t_m(c)\big) + t(c,
 \end{align}
 $$
 
-Up to this point we have ignored an important nuance: what is $H(c)$? In fact, this is a time dependent quantity that increases nonlinearly with $t_m$,
+Up to this point we have ignored an important nuance: what is $H(c)$? In fact, this is a time dependent quantity that increases nonlinearly with time $t$
+that must adjusted for the travel time to the cell,
 $$
-H(c, t_m) &= (1- 0.75^{\max \big(0, t_m - t(s,c)\big)}).
+H(c, t) &= (1- 0.75^{\max \big(0, t - t(s,c)\big)}),
 $$
 
-To find the best score, we maximize each cell over $t_m$
+where $t = t_m + t(s,c)$. To find the best score, we maximize each cell over $t$
 $$
 \begin{align}
-S (c) &=  \max\limits_{t_m} S(c, t_{\rm m}).
+S (c) &=  \max\limits_{t} S(c, t - t(s,c)).
 \end{align}
 $$
 
