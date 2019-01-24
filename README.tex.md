@@ -20,6 +20,7 @@ $$
 S(c) &= \frac{H(c)}{t_d (c)}, 
 \end{align}
 $$
+
 where $H(c)$ is the halite content of the cell and $t_d (c)$ is the time it would take for a ship to move from this cell to the nearest dropoff point 
 (including the shipyard). This implementation has advantage of being exceedingly simple and highly interpretable. However, the interpretation -- if I 
 *instaneously* mine *all* of the halite contained in this cell, I will collect halite at rate $S$ -- is not actually the one we are looking for. In fact,
@@ -34,6 +35,7 @@ $$
 S(s,p) &= \frac{H(s,p) - T(s,p)}{t(s,p)},
 \end{align}
 $$
+
 where $S(s,p)$ is the score a ship $s$ would achieve if it traveled and mined along path $p$. $H(s,p)$, $T(s,p)$, and $t(s,p)$ are the halite mined, travel costs
 induced, and time in moving the ship $s$ along path $p$. One would then like to optimize over all paths $p$ for a given ship $s$. This, as far as I know, is not a 
 possible computation given the constraints of the game (e.g., the time limit of 2 seconds per turn), and so simplifications and approximations are necessary in order
@@ -42,7 +44,7 @@ like C++ and Java dominate the upper end of the leaderboard. I was not able to o
 a feasible strategy, so I reduced the model to single cell calculations and approximated the effects of additional cells,
 $$
 \begin{align}
-S(c) &= \frac{H(c) - T(s,c) - T(c,d) + \sum\limits_{c'} \big(H(c') - T(c')\big)}{t(s,c) + t_m(c) + t(c,d) + \sum\limits_{c'} \big(t_c(c') + t(c')\bigg)},
+S(c) &= \frac{H(c) - T(s,c) - T(c,d) + \sum\limits_{c'} \big(H(c') - T(c')\big)}{t(s,c) + t_m(c) + t(c,d) + \sum\limits_{c'} \big(t_c(c') + t(c')\big)},
 \end{align}
 $$
 
