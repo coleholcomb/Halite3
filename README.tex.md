@@ -23,7 +23,7 @@ $$
 
 where $H(c)$ is the halite content of the cell and $t_d (c)$ is the time it would take for a ship to move from this cell to the nearest dropoff point 
 (including the shipyard). This implementation has advantage of being exceedingly simple and highly interpretable. However, the interpretation -- if I 
-*instaneously* mine *all* of the halite contained in this cell, I will collect halite at rate $S$ -- is not actually the one we are looking for. In fact,
+*instantaneously* mine *all* of the halite contained in this cell, I will collect halite at rate $S$ -- is not actually the one we are looking for. In fact,
 we cannot instantaneously mine all of the halite contained within a cell, and we must also account for the travel time of the ship to the cell in question 
 and the costs incurred in travelling. These factors, and others, add considerable complexity to the calculation and must be dealt with appropriately 
 in advancing the scoring model.
@@ -44,9 +44,40 @@ like C++ and Java dominate the upper end of the leaderboard. I was not able to o
 a feasible strategy, so I reduced the model to single cell calculations and approximated the effects of additional cells,
 $$
 \begin{align}
-S(c) &= \frac{H(c) - T(s,c) - T(c,d) + \sum\limits_{c'} \big(H(c') - T(c')\big)}{t(s,c) + t_m(c) + t(c,d) + \sum\limits_{c'} \big(t_c(c') + t(c')\big)},
+S(c) &= \frac{H(c) - T(s,c) - T(c,d) + \sum\limits_{c'} \big(H(c') - T(c')\big)}{t(s,c) + t_m(c) + t(c,d) + \sum\limits_{c'} \big(t_c(c') + t_m(c')\big)},
 \end{align}
 $$
+
+where $H(c)$ is the halite mined at cell $c$, $T(a,b)$ are the travel costs incurred in traveling from point $a$ to  point $b$ (the symbol $s$ standing in for the location of the ship),
+$t(a,b)$ is the travel time from $a$ to $b$, and $t_m (c)$ is the time spent mining cell $c$. The inclusion of secondary, tertiary, etc... cells is encapsulated by the sum over $c'$. With
+the exception of the $T(c,d)$ and $t(c,d)$ terms (i.e., using the cost and travel time of return to the dropoff from the primary cell $c$), this an equivalent representation of
+$\max\limits_p' S(s,p_c + p')$, where $p_c$ is the path to $c$ and $p'$ can be any path starting at $c$ and ending at a dropoff, assuming that you know what the optimal cells $c'$ are.
+
+As stated above, it was not feasible to calculate the optimal $c'$. Instead, we make some assumptions to simplify the sum terms into viable forms.
+The first assumption is that a ship will seek to maximize its halite cargo before returning, so that
+$$
+\begin{align}
+\sum\limits_{c'} \big(H(c') - T(c')\big) &\approx H_{\rm max} - \big(H(c) - T(s,c)\big),
+\end{align}
+$$
+
+where $H_{\rm max} = 1000$ is the maximum amount of halite an individual ship can carry at a time. This assumption reduces the numerator of $S(c)$ to $H_{\rm max} - T(c,d)$.
+In order to reduce the denominator, we assume that the travel and mining times for the additional cells will be about the same as those of the primary cell, such that
+a full path will include $n \equiv H_{\rm max}/\big(H(c) - T(s,c)\big)$ mining sites,
+$$
+\begin{align}
+ \sum\limits_{c'} \big(t_c(c') + t_m(c')\big) &\approx n(t(s,c) + t_m(c)).
+\end{align}
+$$
+
+Combining these approximations, the full score is
+\begin{align}
+S(c) &= \frac{H_{\rm max} - T(c,d)}{nt(s,c) + nt_m(c) + t(c,d)}.
+\end{align}
+$$
+
+
+
 
 $$
 \begin{align}
