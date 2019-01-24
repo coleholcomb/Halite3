@@ -1,16 +1,14 @@
-# Write Up
+# Post-Mortem: A top 100 bot in 10 days
 
 ## Overview
 
-### Thoughts On The Game
-
-### My Performance
+This is my submission to the [Halite 3](halite.io) competition, hosted by [Two Sigma](https://www.twosigma.com/). My profile is [here](https://halite.io/user/?user_id=562).
 
 ## Details
 The Halite game is complex enough that a competitor can improve their standing by enhancing any of several key components in their bot. 
 Given that the game revolves around collecting the largest quantity of halite in a specified amount of time, it seemed that optimally prioritizing
 cells to mine from, and allocating ships to those cells, would be the single most important aspects of a strong bot. For this reason, I spent more 
-time developing the target selection strategy than any other component of my bot.
+time developing the target selection (cell scoring) strategy than any other component of my bot.
 
 ### Cell Scoring
 I believed, as many competitors did, that the fundamental quantity to maximize was the halite collected per time. Within the sphere of target selection,
@@ -39,7 +37,7 @@ $$
 where $S(s,p)$ is the score a ship $s$ would achieve if it traveled and mined along path $p$. $H(s,p)$, $T(s,p)$, and $t(s,p)$ are the halite mined, travel costs
 induced, and time in moving the ship $s$ along path $p$. One would then like to optimize over all paths $p$ for a given ship $s$. This, as far as I know, is not a 
 possible computation given the constraints of the game (e.g., the time limit of 2 seconds per turn), and so simplifications and approximations are necessary in order
-to prune the space of possible solutions to a managable level. I believe that some of the top competitors took this approach, which is why relatively fast languages
+to prune the space of possible solutions to a managable level. I believe that a few of the top competitors took this approach, which is why relatively fast languages
 like C++ and Java dominate the upper end of the leaderboard. I was not able to optimize my Python code to the point where moving beyond single cell calculations was 
 a feasible strategy, so I reduced the model to single cell calculations and approximated the effects of additional cells,
 $$
@@ -66,30 +64,45 @@ In order to reduce the denominator, we assume that the travel and mining times f
 a full path will include $n \equiv H_{\rm max}/\big(H(c) - T(s,c)\big)$ mining sites,
 $$
 \begin{align}
- \sum\limits_{c'} \big(t_c(c') + t_m(c')\big) &\approx n(t(s,c) + t_m(c)).
-\end{align}
-$$
-
-Combining these approximations, the full score is
-\begin{align}
-S(c) &= \frac{H_{\rm max} - T(c,d)}{nt(s,c) + nt_m(c) + t(c,d)}.
+ \sum\limits_{c'} \big(t_c(c') + t_m(c')\big) &\approx n\big(t(s,c) + t_m(c)\big).
 \end{align}
 $$
 
 
-
-
+Combining the above approximations, the score is
 $$
 \begin{align}
-S (c) &=  \max\limits_{t_m} S(c, t_{\rm m}) \\
- S(c, t_{\rm m}) &= \frac{H_{\rm c}(t_{\rm c}, t_{\rm m}) - T_{\rm c}}{t_{\rm m} + t_c}\bigg[ \frac{1 + \frac{\sum_{\rm c' \ne c}  H_{\rm c'} - T_{\rm c'}}{}}{}\bigg] 
+S(c, t_m) &\approx \frac{H_{\rm max} - T(c,d)}{n\big(t(s,c) + t_m(c)\big) + t(c,d)}.
 \end{align}
 $$
 
-## Next Steps
+Up to this point we have ignored an important nuance: what is $H(c)$? In fact, this is a time dependent quantity that increases nonlinearly with $t_m$,
+$$
+H(c, t_m) &= (1- 0.75^{\max \big(0, t_m - t(s,c)\big)}).
+$$
+
+To find the best score, we maximize each cell over $t_m$
+$$
+\begin{align}
+S (c) &=  \max\limits_{t_m} S(c, t_{\rm m}).
+\end{align}
+$$
+
+It can be shown that there is a value of %t_m$ that maximizes the halite collected per time. In practice, I looked for the maximum score over an 
+$N_t \times H \times W$ matrix, where $N_t = 60$ is the maximum value of $t_m + t(s,c)$ that I computed scores for,
+and $H$ and $W$ are the height and width of the map.
+
+The score derived above is not the end of the story. Heuristics were included to capitilize on the inspiration mechanic (4p only) and to
+increase priority to dense halite regions (decreasing travel time on secondary+ cells). Unfortunately these multipliers are not well motivated like the above
+discussion, and I was only able to tinker with them in the final day. As a result, their values are likely far from optimal and there is not much room for 
+explanation. Additionally, it should be noted that ``halite collected per turn" is not precisely the correct quantity to maximize, since there is also an
+advantage in returning the halite to the dropoffs sooner rather than later. This could likely be captured with some scoring heuristic, but I did not get around
+to implementing one.
+
+### Other
 * Better depositing conversion
 * Other ship types
-* Implement dropoffs
+
 
 ## Version History
 * botv14 (final)
@@ -132,6 +145,6 @@ $$
   * Reversed order of mining and depositing commands for more efficient deposition
   * Role swapping (depositing -> mining) is performed prior to command loop
 * botv1
-  * Basic role assignment
+  * Basic ship role assignment
   * Primitive mining selection
   * Naive deposit
