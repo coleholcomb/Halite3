@@ -3,7 +3,7 @@
 ## Overview
 
 ## Details: Cell Scoring
-<img src="/tex/389962f161ecdfe137c49f63739408df.svg?invert_in_darkmode&sanitize=true" align=middle width=39.96184334999999pt height=14.15524440000002pt/>
+<p align="center"><img src="/tex/a91743d545c46fcecc0eade8ef2467c5.svg?invert_in_darkmode&sanitize=true" align=middle width=331.35747645pt height=78.7738347pt/></p>
 
 ## Next Steps
 * Better depositing conversion
