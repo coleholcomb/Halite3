@@ -3,14 +3,22 @@
 ## Overview
 
 This is my submission to the [Halite 3](halite.io) competition, hosted by [Two Sigma](https://www.twosigma.com/). My profile is [here](https://halite.io/user/?user_id=562).
+Unfortunately, I was not able to participate in the ~3 month competition until 10 days before the final submission deadline. Given the time I had available, I focused my time on
+the one or two aspects that I believed were the most important of creating a strong bot. As of this writing, my submission is sitting around rank ~90, with some uncertainty as 
+the final round plays out.
 
-## Details
+Most of my time was spent on optimizing target selection (detailed below) and on ship navigation. These features allow my bot to have a relatively strong early-game which
+typically gives me a slight edge in the first 100 turns. At the highest ranks, mid- and late-game seems to be dominated by exploitation of the inspiration and dropoff mechanics,
+which I was only able to naively implement in the final day of the competition, and ship micro-management around enemy ships, which I did not implement at all. I only had time to make
+use of inspiration in my 4-player game strategy, and hence my 4-player win rate is carrying my ranking while my 2-player win rate is abysmal. However, my presence in the top 100
+indicates that it is possible to get very far while concentrating only on one or two aspects of the game and maintaining only rudimentary implementations of the others. 
+
+## Details: Cell Scoring
 The Halite game is complex enough that a competitor can improve their standing by enhancing any of several key components in their bot. 
 Given that the game revolves around collecting the largest quantity of halite in a specified amount of time, it seemed that optimally prioritizing
 cells to mine from, and allocating ships to those cells, would be the single most important aspects of a strong bot. For this reason, I spent more 
-time developing the target selection (cell scoring) strategy than any other component of my bot.
+time developing the target selection (cell scoring) strategy than any other component of my bot, and provide details below.
 
-### Cell Scoring
 I believed, as many competitors did, that the fundamental quantity to maximize was the halite collected per time. Within the sphere of target selection,
 this takes the form of a scoring/objective function <img src="/tex/2a2ac6cebda315d6c50722c2181d9e3d.svg?invert_in_darkmode&sanitize=true" align=middle width=30.926619899999988pt height=24.65753399999998pt/>, where <img src="/tex/3e18a4a28fdee1744e5e3f79d13b9ff6.svg?invert_in_darkmode&sanitize=true" align=middle width=7.11380504999999pt height=14.15524440000002pt/> is the cell to scored. In its most basic construction, one has
 <p align="center"><img src="/tex/9fc6ec3aaa0b07d92cd7b132f128747f.svg?invert_in_darkmode&sanitize=true" align=middle width=96.25481414999999pt height=38.83491479999999pt/></p>
@@ -58,7 +66,9 @@ Up to this point we have ignored an important nuance: what is <img src="/tex/462
 To find the best score, we maximize each cell over <img src="/tex/9f40ef19232722eb77473049a513a4ff.svg?invert_in_darkmode&sanitize=true" align=middle width=17.60094764999999pt height=20.221802699999984pt/>
 <p align="center"><img src="/tex/0db0a7210c0531de67603c5ed9587062.svg?invert_in_darkmode&sanitize=true" align=middle width=146.53346894999999pt height=23.8356162pt/></p>
 
-It can be shown that there is a value of %t_m<img src="/tex/8c9be81c4f12d166e8e74cb223acb155.svg?invert_in_darkmode&sanitize=true" align=middle width=652.5718188000001pt height=22.831056599999986pt/>N_t \times H \times W<img src="/tex/1cea794e569a80d1ed9acb5f1c58a9e4.svg?invert_in_darkmode&sanitize=true" align=middle width=104.15859629999999pt height=22.831056599999986pt/>N_t = 60<img src="/tex/57affd25b7ff44e536aedc718c54afe7.svg?invert_in_darkmode&sanitize=true" align=middle width=170.21221634999998pt height=22.831056599999986pt/>t_m + t(s,c)<img src="/tex/691cc427d87f9fedde694fb7b066dab8.svg?invert_in_darkmode&sanitize=true" align=middle width=213.07338194999997pt height=22.831056599999986pt/>H<img src="/tex/fd92a53167b3c6ae9574071613d555dc.svg?invert_in_darkmode&sanitize=true" align=middle width=27.11199479999999pt height=22.831056599999986pt/>W$ are the height and width of the map.
+It can be shown that there is a value of <img src="/tex/9f40ef19232722eb77473049a513a4ff.svg?invert_in_darkmode&sanitize=true" align=middle width=17.60094764999999pt height=20.221802699999984pt/> that maximizes the halite collected per time. In practice, I looked for the maximum score over an 
+<img src="/tex/6025137a73280691e8900733628d7dd5.svg?invert_in_darkmode&sanitize=true" align=middle width=91.98606779999999pt height=22.465723500000017pt/> matrix, where <img src="/tex/21eab637b280a159e0a38102d607ce90.svg?invert_in_darkmode&sanitize=true" align=middle width=57.351505199999984pt height=22.465723500000017pt/> is the maximum value of <img src="/tex/e663bf758c6d50df7bd0244f4c79a43d.svg?invert_in_darkmode&sanitize=true" align=middle width=79.36075124999999pt height=24.65753399999998pt/> that I computed scores for,
+and <img src="/tex/7b9a0316a2fcd7f01cfd556eedf72e96.svg?invert_in_darkmode&sanitize=true" align=middle width=14.99998994999999pt height=22.465723500000017pt/> and <img src="/tex/84c95f91a742c9ceb460a83f9b5090bf.svg?invert_in_darkmode&sanitize=true" align=middle width=17.80826024999999pt height=22.465723500000017pt/> are the height and width of the map.
 
 The score derived above is not the end of the story. Heuristics were included to capitilize on the inspiration mechanic (4p only) and to
 increase priority to dense halite regions (decreasing travel time on secondary+ cells). Unfortunately these multipliers are not well motivated like the above
@@ -66,11 +76,6 @@ discussion, and I was only able to tinker with them in the final day. As a resul
 explanation. Additionally, it should be noted that ``halite collected per turn" is not precisely the correct quantity to maximize, since there is also an
 advantage in returning the halite to the dropoffs sooner rather than later. This could likely be captured with some scoring heuristic, but I did not get around
 to implementing one.
-
-### Other
-* Better depositing conversion
-* Other ship types
-
 
 ## Version History
 * botv14 (final)
