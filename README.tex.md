@@ -21,7 +21,7 @@ cells to mine from, and allocating ships to those cells, would be the single mos
 time developing the target selection (cell scoring) strategy than any other component of my bot, and provide details below.
 
 I believed, as many competitors did, that the fundamental quantity to maximize was the halite collected per time. Within the sphere of target selection,
-this takes the form of a scoring/objective function $S(c)$, where $c$ is the cell to scored. In its most basic construction, we have
+this takes the form of a scoring/objective function $S(c)$, where $c$ is the cell to be scored. In its most basic construction, we have
 $$
 \begin{align}
 S(c) &= \frac{H(c)}{t_d (c)}, 
@@ -29,10 +29,10 @@ S(c) &= \frac{H(c)}{t_d (c)},
 $$
 
 where $H(c)$ is the halite content of the cell and $t_d (c)$ is the time it would take for a ship to move from this cell to the nearest dropoff point 
-(including the shipyard). This implementation has advantage of being exceedingly simple and highly interpretable. However, the interpretation -- if I 
+(including the shipyard). This implementation has the advantage of being exceedingly simple and highly interpretable. However, the interpretation -- if I 
 *instantaneously* mine *all* of the halite contained in this cell, I will collect halite at rate $S$ -- is not actually the one we are looking for. In fact,
 we cannot instantaneously mine all of the halite contained within a cell, and we must also account for the travel time of the ship to the cell in question 
-and the costs incurred in travelling. These factors, and others, add considerable complexity to the calculation and must be dealt with appropriately 
+and the costs incurred in travelling. These factors, among others, add considerable complexity to the calculation and must be dealt with appropriately 
 in advancing the scoring model.
 
 In practice, ships will mine more than one cell in a round trip from a halite dropoff point. Therefore, ideally one would generalize from scoring particular
@@ -55,13 +55,14 @@ S(c) &= \frac{H(c) - T(s,c) - T(c,d) + \sum\limits_{c'} \big(H(c') - T(c')\big)}
 \end{align}
 $$
 
-where $H(c)$ is the halite mined at cell $c$, $T(a,b)$ are the travel costs incurred in traveling from point $a$ to  point $b$ (the symbol $s$ standing in for the location of the ship),
-$t(a,b)$ is the travel time from $a$ to $b$, and $t_m (c)$ is the time spent mining cell $c$. The inclusion of secondary, tertiary, etc... cells is encapsulated by the sum over $c'$. With
-the exception of the $T(c,d)$ and $t(c,d)$ terms (i.e., using the cost and travel time of return to the dropoff from the primary cell $c$), this an equivalent representation of
-$\max\limits_p' S(s,p_c + p')$, where $p_c$ is the path to $c$ and $p'$ can be any path starting at $c$ and ending at a dropoff, assuming that you know what the optimal cells $c'$ are.
+where $H(c)$ is the halite mined at cell $c$, $T(a,b)$ are the travel costs incurred in traveling from point $a$ to  point $b$ (the symbols $s$ and $d$ standing in for the 
+locations of the ship and nearest dropoff, respectively),$t(a,b)$ is the travel time from $a$ to $b$, and $t_m (c)$ is the time spent mining cell $c$. The inclusion of secondary, 
+tertiary, etc... cells is encapsulated by the sum over $c'$. With the exception of the $T(c,d)$ and $t(c,d)$ terms (i.e., using the cost and travel time of return to 
+the dropoff from the primary cell $c$), this an equivalent representation of $\max\limits_{p'} S(s,p_c + p')$, where $p_c$ is the path to $c$ and $p'$ can be any path starting 
+at $c$ and ending at a dropoff, assuming that you know what the optimal cells $c'$ are.
 
 As stated above, it was not feasible to calculate the optimal $c'$. Instead, we make some assumptions to simplify the sum terms into viable forms.
-The first assumption is that a ship will seek to maximize its halite cargo before returning, so that
+The first assumption is that a ship will seek to max out its halite cargo before returning, so that
 $$
 \begin{align}
 \sum\limits_{c'} \big(H(c') - T(c')\big) &\approx H_{\rm max} - \big(H(c) - T(s,c)\big),
@@ -77,8 +78,9 @@ $$
 \end{align}
 $$
 
-
-Combining the above approximations, the score is
+The latter assumption is of less quality than the former, since it is very likely that the secondary cell is much closer to the primary cell than the primary cell is to the dropoff,
+particularly in the late phases of the game when preferable mining sites are far from dropoffs. This effect should be somewhat ameliorated by the inclusion of a heuristic 
+factor that amplifies the scores of dense halite regions. Combining the above approximations, the score is
 $$
 \begin{align}
 S(c, t_m) &\approx \frac{H_{\rm max} - T(c,d)}{n\big(t(s,c) + t_m(c)\big) + t(c,d)}.
@@ -86,26 +88,26 @@ S(c, t_m) &\approx \frac{H_{\rm max} - T(c,d)}{n\big(t(s,c) + t_m(c)\big) + t(c,
 $$
 
 Up to this point we have ignored an important nuance: what is $H(c)$? In fact, this is a time dependent quantity that increases nonlinearly with time $t$
-that must adjusted for the travel time to the cell,
+that must be adjusted for the travel time to the cell,
 $$
-H(c, t) &= (1- 0.75^{\max \big(0, t - t(s,c)\big)}),
+H(c, t) &= (1- 0.75^{\max \big(0, t - t(s,c)\big)}) H_0,
 $$
 
-where $t = t_m + t(s,c)$. To find the best score, we maximize each cell over $t$
+where $t = t_m + t(s,c)$ and $H_0$ is the halite content of the cell. To find the best score, we maximize each cell over $t$
 $$
 \begin{align}
 S (c) &=  \max\limits_{t} S(c, t - t(s,c)).
 \end{align}
 $$
 
-It can be shown that there is a value of $t_m$ that maximizes the halite collected per time. In practice, I looked for the maximum score over an 
+It can be shown that there is a value of $t$ that maximizes the halite collected per time. In practice, I looked for the maximum score over an 
 $N_t \times N_H \times N_W$ matrix, where $N_t = 60$ is the maximum value of $t_m + t(s,c)$ that I computed scores for,
 and $N_H$ and $N_W$ are the height and width of the map, respectively.
 
 The score derived above is not the end of the story. Heuristics were included to capitilize on the inspiration mechanic (4p only) and to
 increase priority to dense halite regions (decreasing travel time on secondary+ cells). Unfortunately these multipliers are not well motivated like the above
 discussion, and I was only able to tinker with them in the final day. As a result, their values are likely far from optimal and there is not much room for 
-explanation. Additionally, it should be noted that ``halite collected per turn" is not precisely the correct quantity to maximize, since there is also an
+explanation. Additionally, it should be noted that "halite collected per turn" is not precisely the correct quantity to maximize, since there is also an
 advantage in returning the halite to the dropoffs sooner rather than later. This could likely be captured with some scoring heuristic, but I did not get around
 to implementing one.
 
