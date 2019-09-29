@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is my submission to the [Halite 3](halite.io) competition, hosted by [Two Sigma](https://www.twosigma.com/). My profile is [here](https://halite.io/user/?user_id=562).
+This is my submission to the [Halite 3](https://halite.io) competition, hosted by [Two Sigma](https://www.twosigma.com/). My profile is [here](https://halite.io/user/?user_id=562).
 Unfortunately, I was not able to participate in the ~3 month competition until 10 days before the final submission deadline. Given the time I had available, I focused my time on
 the aspects that I believed were the most important of creating a strong bot. As of this writing, my submission is sitting around rank ~90, with some uncertainty as 
 the final round plays out.
